@@ -3,8 +3,8 @@ import sys, os, csv
 
 def delete_first_rows(input_path, output_path):
     if not os.path.isfile(input_file):
-        print(f'Error: File {file_path} does not exist.')
-        return
+        print(f'Error: File {input_file} does not exist.')
+        sys.exit()
 
     try:
         with open(input_path, 'r', encoding='utf-8') as f:
@@ -74,6 +74,7 @@ if __name__ == '__main__':
            print("<inputfile>       filepath for airodump-ng csv file")
            print("-h OR --help      this menu")
            print("-u                show UNKNOWN mac addresses")
+           print("-o                other than airodump CSV")
            print("-----------------------------------------")
            sys.exit(1)
 
@@ -84,8 +85,16 @@ if __name__ == '__main__':
             unk = True
         else:
             unk = False
+        if arg == "-o":
+            other = True
+        else:
+            other = False
 
-    delete_first_rows(input_file, "TEMP.csv")
+    if other == False:
+        delete_first_rows(input_file, "TEMP.csv")
+    elif other == True:
+        print(f'Skipped trimming file')
+        os.system(f'cp {input_file} TEMP.csv')
     remove_empty("TEMP.csv")
     compare("TEMP.csv", "mac-vendors-export.csv", unk)
     os.remove("TEMP.csv")
